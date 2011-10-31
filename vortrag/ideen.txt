@@ -1,0 +1,15 @@
+Node.JS 
+
+Unterschiede zu JSP: 
+  - JSP ist eine Programmiersprache. Node.js definiert keine eigene neue Sprache.
+  - Node.js ist ein Server, JSP ist eine Programmiersprache.  
+  - JSP baut auf Java auf und nutzt die Java VM, Node.js nutzt Javascript und die V8 engine. 
+
+Node.js gegen JSP? 
+Zwei verschiedene Welten. Node.js ist ein Server, JSP ist eine (Template-)Programmiersprache. 
+Node.js ist ein Server, ähnlich wie GlassFish. 
+Großer Unterschied: GlassFish wird konfiguriert, Node.js programmiert man. 
+GlassFish kommt meistens zusammen mit JSP wodurch GlassFish und JSP oft als ein gesamtprodukt betrachtet wird. So muss es aber nicht sein. 
+Die Aufgabe des HTTP-Servers ist es, Anfragen von außen entgegenzunehmen und sinnvoll umzuleiten. GlasFish leitet anfragen an eine .jsp Seite an das entsprechende Template und das Template kümmert sich wiederum um das Rendern der Webausgabe. Die Idee von Node ist, den Server als Blackbox 
+
+
