@@ -1,0 +1,102 @@
+<html>
+	<head>
+		<script src="/socket.io/socket.io.js"></script>
+		<script>
+			window.onload = init;
+
+			function init() {
+				var url, socket, left, right;
+				url = window.location.protocol + "//" + window.location.hostname;
+				socket = io.connect(url);
+				left = window.screenLeft;
+				right = window.screen.availWidth - document.body.clientWidth - left;
+
+				if(left < right) {
+					setupLeft();
+				} else {
+					setupRight();
+				}
+
+				socket.on('news', function(data) {
+					console.log(data);
+					socket.emit('my other event', {
+						my : 'data'
+					});
+				});
+			}
+
+			function setupLeft() {
+				var button;
+				button = document.createElement("button");
+				button.textContent = "Neu";
+				button.onclick = createNewBlock;
+
+				document.body.appendChild(button);
+				document.body.style.backgroundColor = 'rgb(200,255,200)';
+			}
+
+			function setupRight() {
+				document.body.style.backgroundColor = 'rgb(200,200,255)';
+			}
+			
+			function newBlock() {
+				var token, r, g, b, x, y, w, h;
+				token = "_" + ( ~~(Math.random() * 9999999) ); 
+				r = ~~(255 * Math.random()) % 255; 
+				g = ~~(255 * Math.random()) % 255; 
+				b = ~~(255 * Math.random()) % 255; 
+				h = 50 +  ~~(50 * Math.random()); 
+				w = 200 +  ~~(100 * Math.random()); 
+				x = 30 +  ~~(255 * Math.random());
+				y = 30 +  ~~(255 * Math.random()); 
+				
+				return {
+					"n" : token, 
+					"r" : r, 
+					"g" : g, 
+					"b" : b, 
+					"h" : h, 
+					"w" : w, 
+					"x" : x, 
+					"y" : y 
+				};
+			}
+
+			function createNewBlock() {
+				var data, block, r, g, b, x, y, w, h, closeButton, textBox;
+				data = newBlock(); 
+				
+				block = document.createElement("span");
+				
+				block.id = data.n; 
+				
+				block.style.position = "absolute";
+				block.style.height = data.h; 
+				block.style.width = data.w; 
+				block.style.left = data.x; 
+				block.style.top = data.y; 
+				block.style.backgroundColor = 'rgb(' + data.r + ',' + data.g + ',' + data.b + ')';
+				
+				closeButton = document.createElement("button"); 
+				closeButton.textContent = "X"; 
+				closeButton.onclick = function() {
+					document.body.removeChild(block); 
+				};
+				
+				block.appendChild(closeButton); 
+				
+				textBox = document.createElement("input"); 
+				textBox.type = "text"; 
+				
+				block.appendChild(textBox); 
+				
+				document.body.appendChild(block); 
+				
+				return {
+					"r" : "" 
+				};
+			}
+		</script>
+	</head>
+	<body></body>
+</html>
