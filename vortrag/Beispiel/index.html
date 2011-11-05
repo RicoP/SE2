@@ -13,6 +13,8 @@
 			var posx = 0;
 			var posy = 0;
 
+			var socket;
+
 			function dragstart(element) {
 				//Wird aufgerufen, wenn ein Objekt bewegt werden soll.
 
@@ -33,8 +35,18 @@
 				posx = document.all ? window.event.clientX : ereignis.pageX;
 				posy = document.all ? window.event.clientY : ereignis.pageY;
 				if(dragobjekt != null) {
-					dragobjekt.style.left = (posx - dragx) + "px";
-					dragobjekt.style.top = (posy - dragy) + "px";
+					var x = posx - dragx;
+					var y = posy - dragy;
+					var id = dragobjekt.id;
+
+					dragobjekt.style.left = x + "px";
+					dragobjekt.style.top = y + "px";
+
+					socket.emit("drag", {
+						"n" : id,
+						"x" : x,
+						"y" : y
+					})
 				}
 			}
 
@@ -42,7 +54,7 @@
 			window.onload = init;
 
 			function init() {
-				var url, socket;
+				var url;
 				url = window.location.protocol + "//" + window.location.hostname;
 				socket = io.connect(url);
 
@@ -51,21 +63,58 @@
 
 				setup();
 
-				socket.on('news', function(data) {
-					console.log(data);
-					socket.emit('my other event', {
-						my : 'data'
-					});
+				socket.on('drag', function(data) {
+					var e = document.getElementById(data.n);
+					if(!e) {
+						console.log(data.n + " exisitert nicht!");
+						return;
+					}
+
+					e.style.top = data.y;
+					e.style.left = data.x
+				});
+
+				socket.on("kill", function(data) {
+					var e = document.getElementById(data.n);
+					if(!e) {
+						console.log(data.n + " exisitert nicht!");
+						return;
+					}
+
+					document.body.removeChild(e);
+				});
+
+				socket.on("message", function(data) {
+					var e = document.getElementById(data.n);
+					if(!e) {
+						console.log(data.n + " exisitert nicht!");
+						return;
+					}
+
+					var t = e.getElementsByTagName("div")[0];
+
+					if(t.innerText) {
+						t.innerText = data.m;
+					} else {
+						t.innerHTML = data.m;
+					}
+				});
+
+				socket.on("new", function(data) {
+					createNewBlock(data, false);
 				});
 			}
 
 			function setup() {
-				var button;
+				var button, message;
 				button = document.createElement("button");
 				button.textContent = "Neu";
-				button.onclick = createNewBlock;
+				button.onclick = createNewOwnBlock;
 
 				document.body.appendChild(button);
+				message = document.createElement("span");
+				message.innerHTML = "";
+
 				document.body.style.backgroundColor = 'rgb(200,255,200)';
 			}
 
@@ -88,13 +137,20 @@
 					"h" : h, // Höhe
 					"w" : w, // Breite
 					"x" : x, // X-Position
-					"y" : y // Y-Position
+					"y" : y, // Y-Position
+					"m" : "" // Message
 				};
 			}
 
-			function createNewBlock() {
-				var data, block, r, g, b, x, y, w, h, closeButton, textBox, mouseIsDown, mousePos;
-				data = newBlock();
+			function createNewOwnBlock() {
+				var data = newBlock();
+				createNewBlock(data, true);
+
+				socket.emit("new", data);
+			}
+
+			function createNewBlock(data, isOwn) {
+				var block, r, g, b, x, y, w, h, closeButton, textBox, mouseIsDown, mousePos;
 				block = document.createElement("span");
 
 				block.id = data.n;
@@ -110,17 +166,32 @@
 				closeButton.textContent = "X";
 				closeButton.onclick = function() {
 					document.body.removeChild(block);
+					socket.emit("kill", {
+						"n" : data.n
+					});
 				};
 
 				block.appendChild(closeButton);
-				textBox = document.createElement("input");
-				textBox.type = "text";
+				if(isOwn) {
+					textBox = document.createElement("input");
+					textBox.type = "text";
+					textBox.onchange = textBox.oninput = function() {
+						socket.emit("message", {
+							"n" : data.n,
+							"m" : textBox.value
+						});
+					};
+				} else {
+					textBox = document.createElement("div");
+				}
 
 				block.appendChild(textBox);
 
-				block.onmousedown = function() {
-					dragstart(block)
-				};
+				if(isOwn) {
+					block.onmousedown = function() {
+						dragstart(block)
+					};
+				}
 
 				document.body.appendChild(block);
 			}
