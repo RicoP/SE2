@@ -100,6 +100,16 @@
 					}
 				});
 
+				socket.on("data", function(data) {
+					if(!document.getElementById(data.n)) {
+						for(var k in data) {
+							if(data.hasOwnProperty(k)) {
+								createNewBlock(data[k], false);
+							}
+						}
+					}
+				});
+
 				socket.on("new", function(data) {
 					createNewBlock(data, false);
 				});
@@ -175,6 +185,7 @@
 				if(isOwn) {
 					textBox = document.createElement("input");
 					textBox.type = "text";
+					textBox.value = data.m; 
 					textBox.onchange = textBox.oninput = function() {
 						socket.emit("message", {
 							"n" : data.n,
@@ -183,6 +194,12 @@
 					};
 				} else {
 					textBox = document.createElement("div");
+					if(textBox.innerText) {
+						textBox.innerText = data.m; 
+					}
+					else {
+						textBox.innerHTML = data.m; 
+					}
 				}
 
 				block.appendChild(textBox);
@@ -198,5 +215,9 @@
 		</script>
 		<title>Node.js Demo</title>
 	</head>
-	<body></body>
+	<body>
+		<div>
+			<b>se2demo.possienka.de</b>
+		</div>
+	</body>
 </html>
