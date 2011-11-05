@@ -5,7 +5,7 @@ fs = require('fs');
 app.listen(8005);
 
 console.log("SE2 Demo auf Port 8005.");
-process.name = "node se2 demo"; 
+process.title = "node se2 demo"; 
 
 
 function handler(req, res) {
