@@ -2,9 +2,9 @@ var app = require('http').createServer(handler), //
 io = require('socket.io').listen(app), //
 fs = require('fs');
 
-app.listen(8008);
+app.listen(8005);
 
-console.log("SE2 Demo auf Port 8008.")
+console.log("SE2 Demo auf Port 8005.")
 
 function handler(req, res) {
 	fs.readFile(__dirname + '/index.html', function(err, data) {

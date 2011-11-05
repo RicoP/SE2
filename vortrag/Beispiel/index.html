@@ -119,7 +119,13 @@
 				var button, message;
 				button = document.createElement("button");
 				button.textContent = "Neu";
-				button.onclick = createNewOwnBlock;
+				button.onclick = function() {
+					document.body.removeChild(button);
+					var data = newBlock();
+					createNewBlock(data, true);
+
+					socket.emit("new", data);
+				};
 
 				document.body.appendChild(button);
 				message = document.createElement("span");
@@ -129,18 +135,18 @@
 			}
 
 			function newBlock() {
-				var token, r, g, b, x, y, w, h;
-				token = "_" + (~~(Math.random() * 9999999) );
-				r = ~~(255 * Math.random()) % 255;
-				g = ~~(255 * Math.random()) % 255;
-				b = ~~(255 * Math.random()) % 255;
-				h = 50 + ~~(50 * Math.random());
-				w = 200 + ~~(100 * Math.random());
-				x = 30 + ~~(255 * Math.random());
-				y = 30 + ~~(255 * Math.random());
+				var n, r, g, b, x, y, w, h;
+				n = "_" + (~~(Math.random() * 9999999999) );
+				r = ~~(128 * Math.random()) + 127;
+				g = ~~(128 * Math.random()) + 127;
+				b = ~~(128 * Math.random()) + 127;
+				h = ~~(50 * Math.random()) + 50;
+				w = ~~(100 * Math.random()) + 200;
+				x = ~~(255 * Math.random()) + 30;
+				y = ~~(255 * Math.random()) + 30;
 
 				return {
-					"n" : token, // Eindeutiger Name
+					"n" : n, // Eindeutiger Name
 					"r" : r, // Rotanteil 0..255
 					"g" : g, // Grünanteil 0..255
 					"b" : b, // Blauanteil 0..255
@@ -150,13 +156,6 @@
 					"y" : y, // Y-Position
 					"m" : "" // Message
 				};
-			}
-
-			function createNewOwnBlock() {
-				var data = newBlock();
-				createNewBlock(data, true);
-
-				socket.emit("new", data);
 			}
 
 			function createNewBlock(data, isOwn) {
@@ -185,7 +184,7 @@
 				if(isOwn) {
 					textBox = document.createElement("input");
 					textBox.type = "text";
-					textBox.value = data.m; 
+					textBox.value = data.m;
 					textBox.onchange = textBox.oninput = function() {
 						socket.emit("message", {
 							"n" : data.n,
@@ -195,10 +194,9 @@
 				} else {
 					textBox = document.createElement("div");
 					if(textBox.innerText) {
-						textBox.innerText = data.m; 
-					}
-					else {
-						textBox.innerHTML = data.m; 
+						textBox.innerText = data.m;
+					} else {
+						textBox.innerHTML = data.m;
 					}
 				}
 
@@ -217,7 +215,7 @@
 	</head>
 	<body>
 		<div>
-			<b>se2demo.possienka.de</b>
+			<h1>se2demo.possienka.de</h1>
 		</div>
 	</body>
 </html>
