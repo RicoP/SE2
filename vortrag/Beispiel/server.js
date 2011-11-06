@@ -50,6 +50,6 @@ function broadcast(socket, event) {
 			boxes[data.n] = data; 
 		}
 
-		socket.broadcast.emit(event, data); 
+		socket.volatile.broadcast.emit(event, data); 
 	});
 }
