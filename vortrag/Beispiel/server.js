@@ -20,25 +20,22 @@ function handler(req, res) {
 		res.end(data);
 	});
 }
-
-var sessions = [];
+ 
 var boxes = {};
 
 io.sockets.on('connection', function(socket) {
-	sessions.push(socket);
-	
 	socket.emit("data", boxes); 
 
-	broadcast(socket, sessions, "drag");
-	broadcast(socket, sessions, "new");
-	broadcast(socket, sessions, "kill");
-	broadcast(socket, sessions, "message");
+	broadcast(socket, "drag");
+	broadcast(socket, "new");
+	broadcast(socket, "kill");
+	broadcast(socket, "message");
 	
 	socket.on("kill", function(data) {
 		delete boxes[data.n]; 
 	}); 
 });
-function broadcast(socket, sessions, event) {
+function broadcast(socket, event) {
 	socket.on(event, function(data) {
 		//update box
 		var box = boxes[data.n];
@@ -53,11 +50,6 @@ function broadcast(socket, sessions, event) {
 			boxes[data.n] = data; 
 		}
 
-		for(var i = 0; i != sessions.length; i++) {
-			if(socket !== sessions[i]) {
-				var s = sessions[i];
-				s.emit(event, data);
-			}
-		}
+		socket.broadcast.emit(event, data); 
 	});
 }

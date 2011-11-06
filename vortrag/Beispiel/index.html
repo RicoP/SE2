@@ -1,3 +1,4 @@
+<!DOCTYPE html>
 <html>
 	<head>
 		<script src="/socket.io/socket.io.js"></script>
@@ -70,8 +71,8 @@
 						return;
 					}
 
-					e.style.top = data.y;
-					e.style.left = data.x
+					e.style.top = data.y + "px";
+					e.style.left = data.x + "px"
 				});
 
 				socket.on("kill", function(data) {
@@ -136,7 +137,7 @@
 
 			function newBlock() {
 				var n, r, g, b, x, y, w, h;
-				n = "_" + (~~(Math.random() * 9999999999) );
+				n = "_" + (~~(Math.random() * 9999999) );
 				r = ~~(128 * Math.random()) + 127;
 				g = ~~(128 * Math.random()) + 127;
 				b = ~~(128 * Math.random()) + 127;
@@ -166,10 +167,10 @@
 				mouseIsDown = false;
 
 				block.style.position = "absolute";
-				block.style.height = data.h;
-				block.style.width = data.w;
-				block.style.left = data.x;
-				block.style.top = data.y;
+				block.style.height = data.h + "px";
+				block.style.width = data.w + "px";
+				block.style.left = data.x + "px";
+				block.style.top = data.y + "px";
 				block.style.backgroundColor = 'rgb(' + data.r + ',' + data.g + ',' + data.b + ')';
 				closeButton = document.createElement("button");
 				closeButton.textContent = "X";
