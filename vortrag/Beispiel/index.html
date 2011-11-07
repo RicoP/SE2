@@ -62,8 +62,6 @@
 				document.onmousemove = drag;
 				document.onmouseup = dragstop;
 
-				setup();
-
 				socket.on('drag', function(data) {
 					var e = document.getElementById(data.n);
 					if(!e) {
@@ -102,6 +100,8 @@
 				});
 
 				socket.on("data", function(data) {
+					setup();
+					
 					if(!document.getElementById(data.n)) {
 						for(var k in data) {
 							if(data.hasOwnProperty(k)) {
@@ -118,6 +118,9 @@
 
 			function setup() {
 				var button, message;
+				
+				document.getElementById("main").innerHTML = ""; //Lösche Lade... 
+				
 				button = document.createElement("button");
 				button.textContent = "Neu";
 				button.onclick = function() {
@@ -218,5 +221,6 @@
 		<div>
 			<h1>se2demo.possienka.de</h1>
 		</div>
+		<span id="main">Lade...</span>
 	</body>
 </html>
