@@ -35,6 +35,7 @@ io.sockets.on('connection', function(socket) {
 		delete boxes[data.n]; 
 	}); 
 });
+
 function broadcast(socket, event) {
 	socket.on(event, function(data) {
 		//update box
